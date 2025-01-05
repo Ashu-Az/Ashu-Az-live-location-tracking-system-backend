@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Location Test</title>
+    <script src="https://cdn.socket.io/4.7.4/socket.io.min.js"></script>
+    <script>
+        const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2Nzc4M2M5NWUyNjRkYTI2MjI0MzI5YmEiLCJpYXQiOjE3MzYwMjQxMzF9.H-IqATChUH_KJ6A0A17hWtUEVHXOz42Ab_1hbeQ-V0k'; // Replace with your actual token
+        const socket = io('http://localhost:3000', {
+            auth: { token }
+        });
+
+        let trackingInterval;
+
+        function startTracking() {
+            trackingInterval = setInterval(() => {
+                // Mock location data
+                const mockLocation = {
+                    latitude: 12.9716 + (Math.random() - 0.5) * 0.01,
+                    longitude: 77.5946 + (Math.random() - 0.5) * 0.01
+                };
+                
+                socket.emit('location-update', mockLocation);
+                document.getElementById('location').textContent = 
+                    `Mock Location: ${mockLocation.latitude.toFixed(4)}, ${mockLocation.longitude.toFixed(4)}`;
+                
+                console.log('Location sent:', mockLocation);
+            }, 4000);
+        }
+
+        function stopTracking() {
+            clearInterval(trackingInterval);
+            console.log('Tracking stopped');
+        }
+
+        socket.on('connect', () => {
+            console.log('Connected to server');
+        });
+
+        socket.on('connect_error', (error) => {
+            console.error('Connection error:', error);
+        });
+    </script>
+</head>
+<body>
+    <h2>Location Tracker Test</h2>
+    <button onclick="startTracking()">Start Mock Tracking</button>
+    <button onclick="stopTracking()">Stop Tracking</button>
+    <div id="location">No location data</div>
+</body>
+</html>

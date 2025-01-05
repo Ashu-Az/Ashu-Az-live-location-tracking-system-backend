@@ -1,0 +1,16 @@
+{
+    "name": "location-tracking",
+    "version": "1.0.0",
+    "type": "module",
+    "scripts": {
+      "start": "node src/app.js"
+    },
+    "dependencies": {
+      "express": "^4.17.1",
+      "socket.io": "^4.7.4",
+      "mongoose": "^6.0.0",
+      "cors": "^2.8.5",
+      "jsonwebtoken": "^8.5.1",
+      "dotenv": "^10.0.0"
+    }
+  }
