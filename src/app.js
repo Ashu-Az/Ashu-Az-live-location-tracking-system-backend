@@ -23,6 +23,7 @@ const io = new Server(server, {
   }
 });
 
+app.get('/health', (req, res) => res.status(200).send('OK'));
 app.use(cors({
   origin: ["http://localhost:3000", "http://localhost:3001"],
   credentials: true
