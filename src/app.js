@@ -17,44 +17,47 @@ app.use(express.json());
 
 const io = new Server(server, {
   cors: {
-    origin: ["http://localhost:3000", "http://localhost:3001"],
+    origin: ["*"],
     methods: ["GET", "POST"],
     credentials: true
   }
 });
 
-app.get('/health', (req, res) => res.status(200).send('OK'));
 app.use(cors({
   origin: ["http://localhost:3000", "http://localhost:3001"],
   credentials: true
 }));
 
 io.use((socket, next) => {
- const token = socket.handshake.auth.token;
- if (!token) {
-   return next(new Error('Authentication error'));
- }
- socket.token = token;
- next();
+  const token = socket.handshake.auth.token;
+  if (!token) {
+    return next(new Error('Authentication error'));
+  }
+  socket.token = token;
+  next();
 });
 
 io.on('connection', socket => {
- console.log('Client connected:', socket.id);
- 
- socket.on('location-update', async data => {
-   try {
-     io.emit('location-updated', {
-       ...data,
-       timestamp: new Date()
-     });
-   } catch (error) {
-     console.error('Location update error:', error);
-   }
- });
+  console.log('Client connected:', socket.id);
+  
+  socket.on('location-update', async data => {
+    try {
+      io.emit('location-updated', {
+        ...data,
+        timestamp: new Date()
+      });
+    } catch (error) {
+      console.error('Location update error:', error);
+    }
+  });
 
- socket.on('disconnect', () => {
-   console.log('Client disconnected:', socket.id);
- });
+  socket.on('disconnect', () => {
+    console.log('Client disconnected:', socket.id);
+  });
+});
+
+app.get('/health', (req, res) => {
+  res.status(200).send('OK');
 });
 
 app.use('/auth', authRouter);
@@ -64,15 +67,15 @@ app.use('/admin', adminRouter);
 const PORT = process.env.PORT || 3002;
 
 async function startServer() {
- try {
-   await connectDB();
-   server.listen(PORT, () => {
-     console.log(`Server running on port ${PORT}`);
-   });
- } catch (error) {
-   console.error('Server startup error:', error);
-   process.exit(1);
- }
+  try {
+    await connectDB();
+    server.listen(PORT, () => {
+      console.log(`Server running on port ${PORT}`);
+    });
+  } catch (error) {
+    console.error('Server startup error:', error);
+    process.exit(1);
+  }
 }
 
 startServer();
